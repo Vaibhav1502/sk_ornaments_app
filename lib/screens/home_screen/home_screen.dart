@@ -9,6 +9,7 @@ import '../product_list_screen/product_list_screen.dart';
 import '../return_policy_screen/return_policy_screen.dart';
 import '../shipping_policy_screen/shipping_policy_screen.dart';
 import '../terms_conditions_screen/terms_conditions_screen.dart';
+import '../wishlist_screen/wishlist_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       // Navigate to Shop screen (placeholder)
         break;
       case 2:
-
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> WishlistScreen() ));
       // Navigate to Wishlist screen (placeholder)
         break;
       case 3:
@@ -377,8 +378,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               title: 'Wishlist',
               onTap: () {
                 Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WishlistScreen()),
+                );
                 setState(() {
-                  _selectedIndex = 2;
+                  //_selectedIndex = 2;
                 });
                 // Add wishlist navigation logic
               },

@@ -1,14 +1,20 @@
+
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+
+// --- Service and Model Imports ---
 import '../../services/cart_service/cart_service.dart';
+import '../../services/wishlist_service/wishlist_service.dart';
 import '../../models/product_detail_model/product_detail_model.dart';
 import '../../services/product_detail_service/product_detail_service.dart';
 
 // --- Theme constants ---
-const Color kBackgroundColor = Color(0xFF25231D);
+const Color kBackgroundColor = Color(0xFF1D2025);
 const Color kAccentColor = Color(0xFFD3B88C);
 const Color kLightTextColor = Color(0xFFEAEAEA);
 
@@ -25,8 +31,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<double> _scrollPosition = ValueNotifier(0.0);
 
-  // --- NEW: State for tracking the cart operation ---
+  // --- State for tracking button operations ---
   bool _isAddingToCart = false;
+  bool _isAddingToWishlist = false;
 
   @override
   void initState() {
@@ -44,43 +51,45 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     super.dispose();
   }
 
-  // --- NEW: Method to handle the add to cart logic ---
+  // --- Method to handle the add to cart logic ---
   Future<void> _handleAddToCart() async {
-    setState(() {
-      _isAddingToCart = true;
-    });
-
+    setState(() => _isAddingToCart = true);
     try {
-      final response = await CartService.addToCart(
-        productId: widget.productId,
-        quantity: 1, // Defaulting to 1 for this example
-      );
-
+      final response = await CartService.addToCart(productId: widget.productId, quantity: 1);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.message, style: const TextStyle(color: Colors.white)),
-            backgroundColor: Colors.green[600],
-            behavior: SnackBarBehavior.floating,
-          ),
+          SnackBar(content: Text(response.message), backgroundColor: Colors.green[600], behavior: SnackBarBehavior.floating),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceFirst("Exception: ", ""), style: const TextStyle(color: Colors.white)),
-            backgroundColor: Colors.red[600],
-            behavior: SnackBarBehavior.floating,
-          ),
+          SnackBar(content: Text(e.toString().replaceFirst("Exception: ", "")), backgroundColor: Colors.red[600], behavior: SnackBarBehavior.floating),
         );
       }
     } finally {
+      if (mounted) setState(() => _isAddingToCart = false);
+    }
+  }
+
+  // --- Method to handle the add to wishlist logic ---
+  Future<void> _handleAddToWishlist() async {
+    setState(() => _isAddingToWishlist = true);
+    try {
+      final response = await WishlistService.addToWishlist(productId: widget.productId);
       if (mounted) {
-        setState(() {
-          _isAddingToCart = false;
-        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.message), backgroundColor: kAccentColor, behavior: SnackBarBehavior.floating),
+        );
       }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceFirst("Exception: ", "")), backgroundColor: Colors.red[600], behavior: SnackBarBehavior.floating),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isAddingToWishlist = false);
     }
   }
 
@@ -95,12 +104,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             return const Center(child: CircularProgressIndicator(color: kAccentColor));
           }
           if (snapshot.hasError || !snapshot.hasData) {
-            return Center(
-              child: Text(
-                snapshot.error?.toString() ?? "Product not found.",
-                style: const TextStyle(color: kLightTextColor),
-              ),
-            );
+            return Center(child: Text(snapshot.error?.toString() ?? "Product not found.", style: const TextStyle(color: kLightTextColor)));
           }
 
           final product = snapshot.data!;
@@ -121,7 +125,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Widget _buildParallaxBackground(String imageUrl, ProductDetail product) {
-    // This widget remains unchanged
     return ValueListenableBuilder<double>(
       valueListenable: _scrollPosition,
       builder: (context, value, child) {
@@ -164,16 +167,51 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.6),
-            Text(
-              product.name,
-              style: GoogleFonts.playfairDisplay(fontSize: 42, color: kLightTextColor, fontWeight: FontWeight.bold, height: 1.2),
-            ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, delay: 200.ms),
-            const SizedBox(height: 16),
-            Text(
-              "₹${product.price}",
-              style: GoogleFonts.lato(fontSize: 24, color: kAccentColor, fontWeight: FontWeight.w600),
-            ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, delay: 300.ms),
+
+            // --- MODIFIED Header with Wishlist Button ---
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.name,
+                        style: GoogleFonts.playfairDisplay(fontSize: 42, color: kLightTextColor, fontWeight: FontWeight.bold, height: 1.2),
+                      ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, delay: 200.ms),
+                      const SizedBox(height: 16),
+                      Text(
+                        "₹${product.price}",
+                        style: GoogleFonts.lato(fontSize: 24, color: kAccentColor, fontWeight: FontWeight.w600),
+                      ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.2, delay: 300.ms),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: kLightTextColor.withOpacity(0.3), width: 1.5),
+                  ),
+                  child: _isAddingToWishlist
+                      ? const SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: Padding(padding: EdgeInsets.all(12.0), child: CircularProgressIndicator(strokeWidth: 2, color: kAccentColor)),
+                  )
+                      : IconButton(
+                    tooltip: "Add to Wishlist",
+                    onPressed: _handleAddToWishlist,
+                    icon: const Icon(Icons.favorite_border, color: kLightTextColor),
+                  ),
+                ).animate().fadeIn(duration: 600.ms).scale(delay: 400.ms),
+              ],
+            ),
             const SizedBox(height: 40),
+
+            // --- Rest of the content remains the same ---
             Html(
               data: product.description,
               style: {"body": Style(fontSize: FontSize(16.0), color: kLightTextColor.withOpacity(0.7), lineHeight: LineHeight.em(1.8))},
@@ -204,8 +242,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
             const SizedBox(height: 40),
-
-            // --- MODIFIED: Add to Bag Button ---
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -218,11 +254,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
                 onPressed: _isAddingToCart ? null : _handleAddToCart,
                 child: _isAddingToCart
-                    ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: kBackgroundColor),
-                )
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: kBackgroundColor))
                     : const Text("ADD TO BAG"),
               ),
             ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.5, delay: 600.ms),
@@ -234,14 +266,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Widget _buildSection(String title, Widget content) {
-    // This widget remains unchanged
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: GoogleFonts.lato(color: kLightTextColor, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1),
-        ),
+        Text(title, style: GoogleFonts.lato(color: kLightTextColor, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1)),
         const SizedBox(height: 16),
         content,
       ],
@@ -249,7 +277,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Widget _buildCustomBackButton(BuildContext context) {
-    // This widget remains unchanged
     return Positioned(
       top: MediaQuery.of(context).padding.top + 10,
       left: 15,
@@ -270,7 +297,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 }
 
-// --- Helper Widgets (No Changes) ---
+// --- Helper Widgets ---
 class _SpecRow extends StatelessWidget {
   final String title;
   final String value;
