@@ -12,7 +12,7 @@ import '../terms_conditions_screen/terms_conditions_screen.dart';
 import '../wishlist_screen/wishlist_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+   HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -43,6 +43,29 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     {'name': 'Bracelets', 'image': 'https://images.unsplash.com/photo-1549985620-caf66ebf912a?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
     {'name': 'Earrings', 'image': 'https://images.unsplash.com/photo-1673285743108-75abe80e7bc1?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
   ];
+
+  final gradient = LinearGradient(
+    begin: Alignment.topCenter,
+      end: Alignment.centerLeft,
+      colors: [
+        Color(0xffebd197),
+        Color(0xffb48811),
+        Color(0xffebd197)
+
+  ]);
+
+  final textStyle = TextStyle(
+      fontSize: 27,
+      color: Color(0xFF8B6B3A),
+      fontWeight: FontWeight.bold,
+      shadows: [
+        BoxShadow(
+            color: Colors.black,
+            spreadRadius: 30,
+            offset: Offset(1, 1)
+        )
+      ]
+  );
 
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -117,12 +140,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          'SK Ornaments',
-          style: GoogleFonts.playfairDisplay(
-            fontSize: 26,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF8B6B3A),
+        title: ShaderMask(
+          shaderCallback: (bounds) {
+            return gradient.createShader(Rect.fromLTWH(0, 0, bounds.width, bounds.height));
+          },
+          child: Text(
+            'SK Ornaments',
+            style: textStyle,
           ),
         ),
         actions: [

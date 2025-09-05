@@ -72,7 +72,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // Navigate to your main app screen and remove the onboarding screen from the stack
     Navigator.of(
       context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
+    ).pushReplacement(MaterialPageRoute(builder: (_) =>  HomeScreen()));
   }
 
   @override

@@ -1,19 +1,14 @@
-
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-
-// --- Service and Model Imports ---
 import '../../services/cart_service/cart_service.dart';
 import '../../services/wishlist_service/wishlist_service.dart';
 import '../../models/product_detail_model/product_detail_model.dart';
 import '../../services/product_detail_service/product_detail_service.dart';
 
-// --- Theme constants ---
+
 const Color kBackgroundColor = Color(0xFF1D2025);
 const Color kAccentColor = Color(0xFFD3B88C);
 const Color kLightTextColor = Color(0xFFEAEAEA);
