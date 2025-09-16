@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../models/auth_models/login_model.dart';
+import '../../models/auth_models/register_model.dart';
 import '../storage/token_storage_service.dart';
 
 class AuthService {
@@ -45,6 +46,54 @@ class AuthService {
       }
     } catch (e) {
       // Re-throw the exception to be handled by the UI
+      rethrow;
+    }
+  }
+  // --- NEW METHOD FOR REGISTRATION ---
+  static Future<User> register({
+    required String name,
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+    required String phone,
+    required String address,
+  }) async {
+    final url = Uri.parse('$_baseUrl/register');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json',
+        },
+        body: json.encode({
+          'name': name,
+          'email': email,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+          'phone': phone,
+          'address': address,
+        }),
+      );
+
+      final responseBody = json.decode(response.body);
+
+      // Status code 201 is also common for successful creation
+      if ((response.statusCode == 200 || response.statusCode == 201) && responseBody['status'] == 'success') {
+        final registerData = RegisterData.fromJson(responseBody['data']);
+
+        if (registerData.token.isNotEmpty) {
+          await _tokenStorage.saveToken(registerData.token);
+          return registerData.user;
+        } else {
+          throw Exception('Registration successful, but no token was provided.');
+        }
+      } else {
+        // Handle validation errors or other API issues
+        throw Exception(responseBody['message'] ?? 'Registration failed. Please try again.');
+      }
+    } catch (e) {
       rethrow;
     }
   }

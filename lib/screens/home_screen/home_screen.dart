@@ -487,6 +487,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 // Add settings navigation logic
               },
             ),
+            SizedBox(height: 15,),
+            TextButton(onPressed: (){
+
+            }, child: Text("Logout",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.red))),
           ],
         ),
       ),

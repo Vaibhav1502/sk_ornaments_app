@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:skornament/screens/auth/register_screen.dart';
 import 'package:skornament/screens/onboarding_screen/onboarding_screen.dart';
 import '../../services/auth_service/auth_service.dart';
 
@@ -66,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // Layer 1: The Background Image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/gold_chain.jpg',
+              'assets/images/back45.jpg',
               fit: BoxFit.cover,
             ),
           ),
@@ -155,7 +157,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             _errorMessage!,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: Color(0xFFFFA0A0), fontSize: 14),
+                            style: const TextStyle(color: Colors.red, fontSize: 20,fontWeight: FontWeight.bold),
+                           // style: const TextStyle(color: Color(0xFFFFA0A0), fontSize: 20),
                           ),
                         ),
 
@@ -163,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(
                         height: 55,
                         child: ElevatedButton(
-                          onPressed: _isLoading ? null : _login,
+                          onPressed:  _isLoading ? null : _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: kAccentColor,
                             foregroundColor: kButtonColor,
@@ -173,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: _isLoading
                               ? const SizedBox(
                             height: 24, width: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: kButtonColor),
+                            child: SpinKitFadingCircle(size: 18, color: kButtonColor),
                           )
                               : const Text("LOGIN"),
                         ),
@@ -181,11 +184,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 24),
                       TextButton(
                         onPressed: () {
-                          // TODO: Navigate to registration screen
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterScreen()));
                         },
                         child: const Text(
                           "Don't have an account? Sign Up",
-                          style: TextStyle(color: kSecondaryTextColorLight),
+                          style: TextStyle(color: kSecondaryTextColorLight,fontSize: 16),
                         ),
                       )
                     ],
