@@ -561,7 +561,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   setState(() {
                     _selectedIndex = 1;
                   });
-                  // Navigate to shop or featured collection
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductListScreen()));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFD4AF37),

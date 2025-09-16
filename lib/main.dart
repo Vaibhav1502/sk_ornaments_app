@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:skornament/screens/auth/login_screen.dart';
 import 'package:skornament/screens/onboarding_screen/onboarding_screen.dart';
 
 
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: OnboardingScreen(),
+      home: LoginScreen(),
     );
   }
 }
