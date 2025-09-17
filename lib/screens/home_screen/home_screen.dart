@@ -6,6 +6,7 @@ import '../about_screen/about_screen.dart';
 import '../contact_screen/contact_screen.dart';
 import '../privacy_policy_screen/privacy_policy_screen.dart';
 import '../product_list_screen/product_list_screen.dart';
+import '../profile/profile_screen.dart';
 import '../return_policy_screen/return_policy_screen.dart';
 import '../shipping_policy_screen/shipping_policy_screen.dart';
 import '../terms_conditions_screen/terms_conditions_screen.dart';
@@ -128,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       // Navigate to Wishlist screen (placeholder)
         break;
       case 3:
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileScreen()));
       // Navigate to Profile screen (placeholder)
         break;
     }
@@ -488,9 +490,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               },
             ),
             SizedBox(height: 15,),
-            TextButton(onPressed: (){
-
-            }, child: Text("Logout",style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.red))),
           ],
         ),
       ),
